@@ -1,0 +1,23 @@
+{
+  "name": "cntproto",
+  "version": "1.0.0",
+  "description": "terefere",
+  "license": "ISC",
+  "author": "jjankowski",
+  "type": "commonjs",
+  "main": "app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node dist/app.js",
+    "dev": "nodemon --exec ts-node src/app.ts"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.1",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.8.3"
+  }
+}
