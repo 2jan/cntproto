@@ -1,4 +1,4 @@
-import EventEmitter from 'node:events';
+import { EventEmitter } from 'events';
 import { randomUUID } from 'crypto';
 import { Step } from './Step';
 import { collectTaskResult } from '../tasks/collectTaskResult';
