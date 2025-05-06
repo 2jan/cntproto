@@ -9,6 +9,7 @@ export abstract class BaseWorker implements Worker {
     protected steps: Map<string, Step<any, any>>;
     protected stepCollectors: Map<string, StepResultCollector<any>>;
     protected stepIterator: MapIterator<[string, Step<any, any>]>;
+    protected currentStepName: string | undefined;
 
     constructor() {
         this.taskProcessor = new TaskProcessor();
@@ -36,6 +37,7 @@ export abstract class BaseWorker implements Worker {
             console.error("No steps to run.");
             return;
         }
+        this.currentStepName = firstStep.value[0];
         const step = firstStep.value[1];
         step.run(data);
     };
@@ -85,12 +87,18 @@ export abstract class BaseWorker implements Worker {
         if (step.done) {
             console.debug("All steps completed.");
         } else {
-            step.value[1].run(result);
+            const data = this.collectStepResult(this.currentStepName, result.result);
+            this.currentStepName = step.value[0];
+            step.value[1].run(data);
         }
     };
 
     private collectStepResult = (stepName: string, result: Map<string, any>): any => {
-
+        if (this.stepCollectors.has(stepName)) {
+            const collector = this.stepCollectors.get(stepName);
+            return collector(result);
+        }
+        return result;
     };
 
     private onTaskCompleted = (result: any): void => {
