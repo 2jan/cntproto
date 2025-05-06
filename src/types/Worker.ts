@@ -1,3 +1,3 @@
 export interface Worker {
-    run: <data>(data: data) => void
+    run<data>(data: data): void;
 };

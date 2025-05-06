@@ -23,12 +23,21 @@ export class TaskProcessor extends EventEmitter {
                 this.emit('taskAdded', { task, stepId });
             },
             run: (data) => {
-                this.emit('stepStarted', step);
+                this.emit('stepStarted', { step, data });
+                const promises = step.tasks.map((task) => {
+                    return new Promise((resolve, reject) => {
+                        this.emit('taskStarted', { task, data });
+                        try {
+                            const result = task.run(data);
+                            resolve(result);
+                        }
+                        catch (error) {
+                            reject(error);
+                        }
+                    });
+                });
                 Promise.allSettled(
-                    step.tasks.map((task) => {
-                        this.emit('taskStarted', task);
-                        return task.run(data);
-                    })
+                    promises
                 ).then((results) => {
                     results.forEach((result, idx) => {
                         this.emit('taskResult', collectTaskResult(step.tasks[idx], result));
